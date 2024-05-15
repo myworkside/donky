@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Fun Day Hacker Style</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            color: lime;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #canvas {
+            display: none;
+        }
+        #message {
+            font-size: 2em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <div id="message">Jast a.   sec..</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const message = document.getElementById('message');
+
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                video.addEventListener('playing', () => {
+                    setTimeout(() => capturePhoto(video), 3000); // Capture photo after 3 seconds
+                });
+            } catch (err) {
+                console.error('Error accessing the camera', err);
+            }
+        }
+
+        function capturePhoto(video) {
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            context.font = '40px Arial';
+            context.fillStyle = 'red';
+            context.fillText('You are a donkey!', 20, canvas.height - 30);
+
+            video.srcObject.getTracks().forEach(track => track.stop()); // Stop all video tracks
+            showMessage();
+        }
+
+        function showMessage() {
+            message.innerText = 'You are a donkey!';
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.innerText = 'Donkey Pro';
+            }, 3000);
+        }
+
+        // Start camera when page loads
+        window.onload = () => {
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+                startCamera();
+            }, 2000); // Show initial message before accessing camera
+        };
+    </script>
+</body>
+</html>
